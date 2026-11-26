@@ -1,0 +1,345 @@
+/* ==========================================================================
+   Shared Styles — Cisco Packet Tracer Lab Modules
+   ========================================================================== */
+
+/* --- CSS Custom Properties (Theme) --- */
+:root {
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --accent: #2563eb;
+  --accent-soft: #eff6ff;
+  --bg-code: #0f172a;
+  --text-code: #e2e8f0;
+  --comment-code: #64748b;
+  --success-code: #4ade80;
+  --error-code: #f87171;
+  --progress-done: #c7d7fb;
+  --stroke-default: #9ca3af;
+  --diagram-bg: #fcfcfd;
+
+  /* Per-page overrides (can be overridden in HTML <style> if needed) */
+  --wrap-width: 800px;
+  --diagram-padding: 12px 8px;
+  --topo-font-size: 13px;
+  --topo-font-weight: 500;
+  --topo-small-size: 10.5px;
+}
+
+/* --- Reset & Base --- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: var(--wrap-width);
+  margin: 0 auto;
+  padding: 44px 20px 64px;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  margin: 0 0 26px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+/* --- Progress Bar --- */
+.progress {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.seg {
+  flex: 1;
+  height: 4px;
+  border: 0;
+  padding: 0;
+  border-radius: 99px;
+  background: var(--line);
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.seg.done {
+  background: var(--progress-done);
+}
+
+.seg.active {
+  background: var(--accent);
+}
+
+/* --- Card --- */
+.card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 26px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 16.5px;
+  font-weight: 600;
+  margin: 8px 0 8px;
+  letter-spacing: -0.01em;
+}
+
+p.desc {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* --- Diagram --- */
+.diagram {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--diagram-bg);
+  padding: var(--diagram-padding);
+  margin-bottom: 18px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+#topo text {
+  font-family: inherit;
+  font-size: var(--topo-font-size);
+  font-weight: var(--topo-font-weight);
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+#topo text.small {
+  font-size: var(--topo-small-size);
+  font-weight: 400;
+  fill: var(--muted);
+}
+
+#topo rect {
+  fill: #fff;
+  stroke: var(--stroke-default);
+  stroke-width: 1.5;
+  transition: 0.25s;
+}
+
+#topo line {
+  stroke: var(--stroke-default);
+  stroke-width: 2;
+  transition: 0.25s;
+}
+
+#topo g {
+  transition: opacity 0.25s;
+}
+
+.dim {
+  opacity: 0.2;
+}
+
+#topo g.hl rect {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  fill: var(--accent-soft);
+}
+
+#topo g.hl line,
+#topo line.hl {
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+  animation: flow 1.2s linear infinite;
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+/* --- Code Block --- */
+pre.code {
+  background: var(--bg-code);
+  color: var(--text-code);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-x: auto;
+  margin: 0 0 22px;
+  white-space: pre;
+}
+
+pre.code .cm {
+  color: var(--comment-code);
+}
+
+pre.code .ok {
+  color: var(--success-code);
+}
+
+pre.code .err {
+  color: var(--error-code);
+}
+
+/* --- Navigation --- */
+.nav {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+button.nav-btn {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+button.nav-btn:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f9fafb;
+}
+
+button.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* --- Accessibility --- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Index Page Styles (Menu Cards)
+   ========================================================================== */
+
+.index-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.index-wrap h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.index-wrap p.sub {
+  margin: 0 0 36px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+a.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: all 0.2s;
+}
+
+a.card:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.card-text h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+
+.card-text p {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.arrow {
+  font-size: 18px;
+  color: var(--muted);
+  transition: 0.2s;
+}
+
+a.card:hover .arrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #e5e7eb;
+  color: #4b5563;
+  padding: 3px 8px;
+  border-radius: 99px;
+  margin-bottom: 8px;
+}
