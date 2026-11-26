@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3-Router Backbone — Daisy Chain</title>
+<style>
+  :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--accent-soft:#eff6ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:800px;margin:0 auto;padding:44px 20px 64px}
+  h1{font-size:18px;font-weight:600;margin:0 0 6px}
+  .sub{margin:0 0 26px;font-size:13.5px;color:var(--muted)}
+  .progress{display:flex;gap:7px;margin-bottom:20px}
+  .seg{flex:1;height:4px;border:0;border-radius:99px;background:var(--line);cursor:pointer;transition:.25s}
+  .seg.done{background:#c7d7fb}.seg.active{background:var(--accent)}
+  .card{border:1px solid var(--line);border-radius:14px;padding:26px}
+  .eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h2{font-size:16.5px;font-weight:600;margin:8px 0 8px}
+  p.desc{margin:0 0 20px;font-size:13.5px;line-height:1.6;color:#374151}
+  .diagram{border:1px solid var(--line);border-radius:10px;background:#fcfcfd;padding:24px 8px;margin-bottom:18px}
+  svg{display:block;width:100%;height:auto}
+  #topo text{font-family:inherit;font-size:13px;font-weight:600;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+  #topo text.small{font-size:10.5px;font-weight:400;fill:var(--muted)}
+  #topo rect{fill:#fff;stroke:#9ca3af;stroke-width:1.5;transition:.25s}
+  #topo line{stroke:#9ca3af;stroke-width:2;transition:.25s}
+  #topo g{transition:opacity .25s}.dim{opacity:.2}
+  #topo g.hl rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+  #topo g.hl line{stroke:var(--accent);stroke-width:3;stroke-dasharray:6 4;animation:flow 1.2s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-10}}
+  pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px 18px;font-size:12.5px;line-height:1.65;font-family:ui-monospace,monospace;overflow-x:auto;margin:0 0 22px;white-space:pre}
+  pre.code .cm{color:#64748b}pre.code .ok{color:#4ade80}pre.code .err{color:#f87171}
+  .nav{display:flex;gap:10px;justify-content:space-between}
+  button.nav-btn{font:inherit;font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s}
+  button.nav-btn:hover:not(:disabled){border-color:#cbd5e1;background:#f9fafb}
+  button.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover:not(:disabled){background:#1d4ed8;border-color:#1d4ed8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>3-Router Backbone</h1>
+  <p class="sub">Cisco Packet Tracer · Adding a 3rd router to a working 2-router setup</p>
+  
+  <div class="progress" id="progress"></div>
+  
+  <div class="card">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h2 id="title"></h2>
+    <p class="desc" id="desc"></p>
+    
+    <div class="diagram">
+      <svg id="topo" viewBox="0 0 780 180" role="img">
+        
+        <!-- R1 to R2 Link -->
+        <g id="link-r1-r2">
+          <line x1="210" y1="120" x2="550" y2="120"/>
+          <text class="small" x="380" y="105">10.0.0.0/24</text>
+        </g>
+
+        <!-- R2 to R3 Link (appears later) -->
+        <g id="link-r2-r3">
+          <line x1="590" y1="120" x2="590" y2="50"/>
+          <text class="small" x="640" y="85">10.0.1.0/24</text>
+        </g>
+
+        <!-- Router 1 -->
+        <g id="r1">
+          <rect x="130" y="90" width="80" height="60" rx="7"/>
+          <text x="170" y="120">R1</text>
+          <text class="small" x="170" y="165">G0/1: 10.0.0.1</text>
+        </g>
+        
+        <!-- Router 2 -->
+        <g id="r2">
+          <rect x="550" y="90" width="80" height="60" rx="7"/>
+          <text x="590" y="120">R2</text>
+          <text class="small" x="590" y="165">G0/1: 10.0.0.2</text>
+        </g>
+
+        <!-- Router 3 -->
+        <g id="r3">
+          <rect x="550" y="20" width="80" height="60" rx="7"/>
+          <text x="590" y="50">R3 (New)</text>
+          <text class="small" x="590" y="15">Router0</text>
+          <text class="small" x="590" y="95">G0/0: 192.168.3.1</text>
+        </g>
+
+      </svg>
+    </div>
+
+    <pre class="code" id="code"></pre>
+    
+    <div class="nav">
+      <button class="nav-btn" id="back">← Back</button>
+      <button class="nav-btn primary" id="next">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const steps = [
+  {
+    title: "Step 1: Place the 3rd Router",
+    desc: "Open your working 2-router lab. Drag a new 2911 router onto the workspace (it will default to 'Router0'). Do not connect any cables yet.",
+    hl: ["r3"],
+    code: `<span class="cm">! You have R1 and R2 working perfectly.</span>
+<span class="cm">! R1: G0/1 is 10.0.0.1</span>
+<span class="cm">! R2: G0/1 is 10.0.0.2</span>
+
+<span class="cm">! Drag a new 2911 Router into the workspace.</span>`
+  },
+  {
+    title: "Step 2: Connect R2 to R3",
+    desc: "R2's G0/1 port is already used by R1. Use R2's empty G0/2 port to connect to the new router's G0/1 port using a Copper Straight-Through cable.",
+    hl: ["r2", "r3", "link-r2-r3"],
+    code: `<span class="cm">R2 G0/2 ────── R3 G0/1   (Straight-Through)</span>
+
+<span class="cm">! Notice the red triangles on the link? 
+! The interfaces are shut down. We will fix this next.</span>`
+  },
+  {
+    title: "Step 3: Configure R3's WAN Interface",
+    desc: "Give R3's G0/1 interface an IP address for the new link and turn it on. We are using a brand new subnet (10.0.1.0/24) for this connection.",
+    hl: ["r3"],
+    code: `R3> enable
+R3# configure terminal
+R3(config)# interface g0/1
+R3(config-if)# ip address 10.0.1.2 255.255.255.0
+R3(config-if)# no shutdown`
+  },
+  {
+    title: "Step 4: Configure R2's New WAN Interface",
+    desc: "Give R2's G0/2 port an IP address in the same 10.0.1.x subnet so it can talk to R3.",
+    hl: ["r2"],
+    code: `R2> enable
+R2# configure terminal
+R2(config)# interface g0/2
+R2(config-if)# ip address 10.0.1.1 255.255.255.0
+R2(config-if)# no shutdown
+
+<span class="cm">! The link lights should now be green.</span>`
+  },
+  {
+    title: "Step 5: Configure R3's LAN Interface",
+    desc: "Give R3 its LAN IP address on G0/0. This will be the default gateway for any future PCs plugged into R3.",
+    hl: ["r3"],
+    code: `R3(config)# interface g0/0
+R3(config-if)# ip address 192.168.3.1 255.255.255.0
+R3(config-if)# no shutdown`
+  },
+  {
+    title: "Step 6: OSPF on R3",
+    desc: "Tell R3 to join the OSPF group. Notice we advertise BOTH the new WAN link and the LAN network.",
+    hl: ["r3"],
+    code: `R3(config)# router ospf 1
+R3(config-router)# network 10.0.1.0 0.0.0.255 area 0
+R3(config-router)# network 192.168.3.0 0.0.0.255 area 0`
+  },
+  {
+    title: "Step 7: OSPF on R2",
+    desc: "R2 needs to know about the new 10.0.1.0 WAN link so it can share the route with R1.",
+    hl: ["r2"],
+    code: `R2(config)# router ospf 1
+R2(config-router)# network 10.0.1.0 0.0.0.255 area 0`
+  },
+  {
+    title: "Step 8: The Magic of OSPF",
+    desc: "R1 is NOT physically connected to R3. But because R2 is sharing routes, R1 will automatically learn how to reach R3's WAN and LAN networks in its routing table.",
+    hl: ["r1", "r2", "r3"],
+    code: `<span class="cm">! Go to R1 and check the routing table:</span>
+R1# show ip route
+
+<span class="cm">! You will see R3's networks listed as 'O' (OSPF) routes:</span>
+<span class="ok">O    10.0.1.0/24 [110/2] via 10.0.0.2</span>
+<span class="ok">O    192.168.3.0/24 [110/2] via 10.0.0.2</span>`
+  },
+  {
+    title: "Step 9: The Expected Failure",
+    desc: "Try to ping R3's LAN interface from PC0. It will fail with 'Destination host unreachable'. This is completely intentional! Because R1 doesn't have a direct physical cable to R3 yet, the packet is being dropped. In the next module, we will fix this by building a direct link.",
+    hl: ["r1", "r3"],
+    code: `PC0> ping 192.168.3.1
+
+<span class="err">Reply from 192.168.1.1: Destination host unreachable.
+Reply from 192.168.1.1: Destination host unreachable.
+Request timed out.</span>
+
+<span class="cm">! Do not worry! This is expected. 
+! We will build the direct connection in the next step.</span>`
+  }
+];
+
+const NODES = ["r1","r2","r3","link-r1-r2","link-r2-r3"];
+const total = steps.length; let cur = 0;
+const segsEl = document.getElementById("progress");
+
+steps.forEach((_, i) => { 
+  const b = document.createElement("button"); 
+  b.className="seg"; 
+  b.addEventListener("click", () => { cur=i; render(); }); 
+  segsEl.appendChild(b); 
+});
+
+const $ = id => document.getElementById(id);
+
+function render(){
+  const s = steps[cur];
+  $("eyebrow").textContent = `Step ${cur + 1} of ${total}`; 
+  $("title").textContent = s.title; 
+  $("desc").textContent = s.desc; 
+  $("code").innerHTML = s.code;
+  
+  NODES.forEach(id => { 
+    const el = $(id); 
+    const on = s.hl.includes(id); 
+    el.classList.toggle("hl", on); 
+    el.classList.toggle("dim", !on); 
+  });
+  
+  [...segsEl.children].forEach((b, i) => { 
+    b.classList.toggle("active", i===cur); 
+    b.classList.toggle("done", i<cur); 
+  });
+  
+  $("back").disabled = cur === 0; 
+  $("next").textContent = cur === total - 1 ? "Restart" : "Next →";
+}
+
+$("back").addEventListener("click", () => { if(cur>0){cur--;render();} });
+$("next").addEventListener("click", () => { cur=(cur+1)%total; render(); });
+
+document.addEventListener("keydown", e => { 
+  if(e.key==="ArrowRight"){cur=(cur+1)%total;render();} 
+  if(e.key==="ArrowLeft"&&cur>0){cur--;render();} 
+});
+
+render();
+</script>
+</body>
+</html>
