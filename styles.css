@@ -259,6 +259,134 @@ button.primary:hover:not(:disabled) {
   }
 }
 
+/* --- Module Navigation (Between Progress Bar and Card) --- */
+.module-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 16px;
+  margin: 20px 0 24px;
+}
+
+/* Left Side: Back Button - matches Next button design */
+.btn-back {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 0 0 auto;
+  max-width: 280px;
+  padding: 14px 20px;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.btn-back:hover {
+  border-color: var(--muted);
+  background: #f9fafb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.08);
+}
+
+/* Back Button Text */
+.back-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.back-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-title span.arrow {
+  transition: transform 0.2s;
+}
+
+.btn-back:hover .back-title span.arrow {
+  transform: translateX(-4px);
+}
+
+/* Right Side: Next Module Card */
+.btn-next {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 0 0 auto;
+  max-width: 280px;
+  padding: 14px 20px;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  transition: all 0.2s;
+  text-align: right;
+}
+
+.btn-next:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+/* Next Button Text */
+.next-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+
+.next-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.next-title span.arrow {
+  transition: transform 0.2s;
+}
+
+.btn-next:hover .next-title span.arrow {
+  transform: translateX(4px);
+}
+
+/* Disabled state for btn-next (on last page) */
+.btn-next.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-next.disabled:hover {
+  border-color: var(--line);
+  background: #fff;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-next.disabled .next-title span.arrow {
+  transform: none;
+}
+
 /* ==========================================================================
    Index Page Styles (Menu Cards)
    ========================================================================== */
