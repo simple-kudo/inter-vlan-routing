@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connecting Branches — End-to-End Ping</title>
+<style>
+  :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--accent-soft:#eff6ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:800px;margin:0 auto;padding:44px 20px 64px}
+  h1{font-size:18px;font-weight:600;margin:0 0 6px}
+  .sub{margin:0 0 26px;font-size:13.5px;color:var(--muted)}
+  .progress{display:flex;gap:7px;margin-bottom:20px}
+  .seg{flex:1;height:4px;border:0;border-radius:99px;background:var(--line);cursor:pointer;transition:.25s}
+  .seg.done{background:#c7d7fb}.seg.active{background:var(--accent)}
+  .card{border:1px solid var(--line);border-radius:14px;padding:26px}
+  .eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h2{font-size:16.5px;font-weight:600;margin:8px 0 8px}
+  p.desc{margin:0 0 20px;font-size:13.5px;line-height:1.6;color:#374151}
+  .diagram{border:1px solid var(--line);border-radius:10px;background:#fcfcfd;padding:12px 8px;margin-bottom:18px}
+  svg{display:block;width:100%;height:auto}
+  #topo text{font-family:inherit;font-size:12px;font-weight:500;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+  #topo text.small{font-size:10px;font-weight:400;fill:var(--muted)}
+  #topo rect{fill:#fff;stroke:#9ca3af;stroke-width:1.5;transition:.25s}
+  #topo line{stroke:#9ca3af;stroke-width:2;transition:.25s}
+  #topo g{transition:opacity .25s}.dim{opacity:.2}
+  #topo g.hl rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+  #topo g.hl line{stroke:var(--accent);stroke-width:3;stroke-dasharray:6 4;animation:flow 1.2s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-10}}
+  pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px 18px;font-size:12.5px;line-height:1.65;font-family:ui-monospace,monospace;overflow-x:auto;margin:0 0 22px;white-space:pre}
+  pre.code .cm{color:#64748b}pre.code .ok{color:#4ade80}pre.code .err{color:#f87171}
+  .nav{display:flex;gap:10px;justify-content:space-between}
+  button.nav-btn{font:inherit;font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;transition:.15s}
+  button.nav-btn:hover:not(:disabled){border-color:#cbd5e1;background:#f9fafb}
+  button.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover:not(:disabled){background:#1d4ed8;border-color:#1d4ed8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Connecting Branches</h1>
+  <p class="sub">Cisco Packet Tracer · Link R1 and R2 to enable PC-to-PC communication</p>
+  
+  <div class="progress" id="progress"></div>
+  
+  <div class="card">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h2 id="title"></h2>
+    <p class="desc" id="desc"></p>
+    
+    <div class="diagram">
+      <svg id="topo" viewBox="0 0 780 160" role="img">
+        <!-- Links -->
+        <g id="link-pc1"><line x1="50" y1="80" x2="90" y2="80"/></g>
+        <g id="link-sw1"><line x1="140" y1="80" x2="180" y2="80"/></g>
+        <g id="link-wan"><line x1="270" y1="80" x2="510" y2="80"/></g>
+        <g id="link-sw2"><line x1="600" y1="80" x2="640" y2="80"/></g>
+        <g id="link-pc2"><line x1="690" y1="80" x2="730" y2="80"/></g>
+
+        <!-- Devices -->
+        <g id="pc1">
+          <rect x="10" y="60" width="40" height="40" rx="5"/>
+          <text x="30" y="80">PC1</text>
+          <text class="small" x="30" y="120">.1.10</text>
+        </g>
+        <g id="sw1">
+          <rect x="90" y="65" width="50" height="30" rx="5"/>
+          <text x="115" y="80">SW1</text>
+        </g>
+        <g id="r1">
+          <rect x="180" y="50" width="90" height="60" rx="7"/>
+          <text x="225" y="80">R1</text>
+          <text class="small" x="225" y="125">G0/1 10.0.0.1</text>
+        </g>
+        <g id="r2">
+          <rect x="510" y="50" width="90" height="60" rx="7"/>
+          <text x="555" y="80">R2</text>
+          <text class="small" x="555" y="125">G0/1 10.0.0.2</text>
+        </g>
+        <g id="sw2">
+          <rect x="640" y="65" width="50" height="30" rx="5"/>
+          <text x="665" y="80">SW2</text>
+        </g>
+        <g id="pc2">
+          <rect x="730" y="60" width="40" height="40" rx="5"/>
+          <text x="750" y="80">PC2</text>
+          <text class="small" x="750" y="120">.2.10</text>
+        </g>
+
+        <text class="small" x="390" y="65">10.0.0.0/24</text>
+      </svg>
+    </div>
+
+    <pre class="code" id="code"></pre>
+    
+    <div class="nav">
+      <button class="nav-btn" id="back">← Back</button>
+      <button class="nav-btn primary" id="next">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const steps = [
+  {
+    title: "Step 1: Connect the WAN Cable",
+    desc: "Connect R1's G0/1 interface directly to R2's G0/1 interface using a Copper Straight-Through cable. Make sure the triangles on the link turn green.",
+    hl: ["r1", "r2", "link-wan"],
+    code: `<span class="cm">R1 G0/1 ────── R2 G0/1     Copper Straight-Through</span>
+
+<span class="cm">! If you see red triangles, run 'no shutdown' on both routers.</span>`
+  },
+  {
+    title: "Step 2: Configure R1's WAN IP",
+    desc: "We use a /24 mask (255.255.255.0) on the WAN link. Always run 'no ip address' first to clear out any old /8 default masks before applying the new one.",
+    hl: ["r1", "link-wan"],
+    code: `R1> enable
+R1# configure terminal
+R1(config)# interface g0/1
+R1(config-if)# no ip address
+R1(config-if)# ip address 10.0.0.1 255.255.255.0
+R1(config-if)# no shutdown`
+  },
+  {
+    title: "Step 3: Configure R2's WAN IP",
+    desc: "Do the exact same thing on R2. Both routers must be on the same subnet with the exact same mask to become neighbors.",
+    hl: ["r2", "link-wan"],
+    code: `R2> enable
+R2# configure terminal
+R2(config)# interface g0/1
+R2(config-if)# no ip address
+R2(config-if)# ip address 10.0.0.2 255.255.255.0
+R2(config-if)# no shutdown`
+  },
+  {
+    title: "Step 4: Turn on OSPF on R1",
+    desc: "Tell R1 to advertise its LAN (192.168.1.0) and the WAN link (10.0.0.0) into the OSPF routing process.",
+    hl: ["r1"],
+    code: `R1(config)# router ospf 1
+R1(config-router)# network 10.0.0.0 0.0.0.255 area 0
+R1(config-router)# network 192.168.1.0 0.0.0.255 area 0`
+  },
+  {
+    title: "Step 5: Turn on OSPF on R2",
+    desc: "Tell R2 to advertise its LAN (192.168.2.0) and the WAN link. Once both routers are running OSPF, they will automatically share their routing tables.",
+    hl: ["r2"],
+    code: `R2(config)# router ospf 1
+R2(config-router)# network 10.0.0.0 0.0.0.255 area 0
+R2(config-router)# network 192.168.2.0 0.0.0.255 area 0`
+  },
+  {
+    title: "Step 6: Verify the Routes (Optional)",
+    desc: "Wait about 10 seconds for OSPF to calculate paths. Then check R1's routing table. You must see an 'O' route pointing to R2's LAN.",
+    hl: ["r1", "link-wan"],
+    code: `R1# show ip route
+
+<span class="cm">! You should see this at the bottom of the table:</span>
+<span class="ok">O    192.168.2.0/24 [110/2] via 10.0.0.2, 00:00:05, GigabitEthernet0/1</span>
+
+<span class="cm">! If you don't see the 'O', double-check your OSPF network commands.</span>`
+  },
+  {
+    title: "Step 7: The End-to-End Ping",
+    desc: "Now that the routers have shared their routes, the network is fully converged. Go to PC1 and ping PC2.",
+    hl: ["pc1", "sw1", "r1", "r2", "sw2", "pc2", "link-pc1", "link-sw1", "link-wan", "link-sw2", "link-pc2"],
+    code: `<span class="cm">! On PC1, open the Command Prompt:</span>
+PC1> ping 192.168.2.10
+
+<span class="ok">Reply from 192.168.2.10: bytes=32 time&lt;1ms TTL=126
+Reply from 192.168.2.10: bytes=32 time&lt;1ms TTL=126</span>
+
+<span class="cm">! Success! The two LANs are now connected.</span>`
+  }
+];
+
+const NODES = ["pc1","sw1","r1","r2","sw2","pc2",
+               "link-pc1","link-sw1","link-wan","link-sw2","link-pc2"];
+const total = steps.length; let cur = 0;
+const segsEl = document.getElementById("progress");
+
+steps.forEach((_, i) => { 
+  const b = document.createElement("button"); 
+  b.className="seg"; 
+  b.addEventListener("click", () => { cur=i; render(); }); 
+  segsEl.appendChild(b); 
+});
+
+const $ = id => document.getElementById(id);
+
+function render(){
+  const s = steps[cur];
+  $("eyebrow").textContent = `Step ${cur + 1} of ${total}`; 
+  $("title").textContent = s.title; 
+  $("desc").textContent = s.desc; 
+  $("code").innerHTML = s.code;
+  
+  NODES.forEach(id => { 
+    const el = $(id); 
+    const on = s.hl.includes(id); 
+    el.classList.toggle("hl", on); 
+    el.classList.toggle("dim", !on); 
+  });
+  
+  [...segsEl.children].forEach((b, i) => { 
+    b.classList.toggle("active", i===cur); 
+    b.classList.toggle("done", i<cur); 
+  });
+  
+  $("back").disabled = cur === 0; 
+  $("next").textContent = cur === total - 1 ? "Restart" : "Next →";
+}
+
+$("back").addEventListener("click", () => { if(cur>0){cur--;render();} });
+$("next").addEventListener("click", () => { cur=(cur+1)%total; render(); });
+
+document.addEventListener("keydown", e => { 
+  if(e.key==="ArrowRight"){cur=(cur+1)%total;render();} 
+  if(e.key==="ArrowLeft"&&cur>0){cur--;render();} 
+});
+
+render();
+</script>
+</body>
+</html>

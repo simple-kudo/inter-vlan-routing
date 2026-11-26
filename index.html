@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Packet Tracer Lab: Multi-Router Network</title>
+<style>
+  :root{--ink:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#2563eb;--accent-soft:#eff6ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:680px;margin:0 auto;padding:60px 20px}
+  
+  h1{font-size:22px;font-weight:600;margin:0 0 8px;letter-spacing:-.02em}
+  p.sub{margin:0 0 36px;font-size:14px;line-height:1.6;color:var(--muted)}
+
+  .menu{display:flex;flex-direction:column;gap:14px}
+  
+  a.card{
+    display:flex;align-items:center;justify-content:space-between;
+    text-decoration:none;color:inherit;border:1px solid var(--line);
+    border-radius:12px;padding:20px 24px;transition:all .2s;
+  }
+  
+  a.card:hover{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    transform:translateY(-2px);
+  }
+
+  .card-text h2{font-size:15px;font-weight:600;margin:0 0 4px;color:var(--ink)}
+  .card-text p{font-size:12.5px;color:var(--muted);margin:0}
+  
+  .arrow{font-size:18px;color:var(--muted);transition:.2s}
+  a.card:hover .arrow{color:var(--accent);transform:translateX(4px)}
+  
+  .badge{
+    display:inline-block;font-size:10px;font-weight:600;letter-spacing:.05em;
+    text-transform:uppercase;background:#e5e7eb;color:#4b5563;
+    padding:3px 8px;border-radius:99px;margin-bottom:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Multi-Router Lab</h1>
+  <p class="sub">A step-by-step guide to building a scalable network in Cisco Packet Tracer. Follow the modules in order to build Branch 1, replicate it for Branch 2, and connect them using OSPF.</p>
+
+  <div class="menu">
+    <!-- Module 1 -->
+    <a href="1-router-config.html" class="card">
+      <div class="card-text">
+        <div class="badge">Module 1</div>
+        <h2>Router Configuration</h2>
+        <p>Set up R1's WAN and LAN interfaces and enable OSPF.</p>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <!-- Module 2 -->
+    <a href="2-switch-pc-setup.html" class="card">
+      <div class="card-text">
+        <div class="badge">Module 2</div>
+        <h2>Switch & PC Configuration</h2>
+        <p>Connect the LAN, assign IP addresses, and test local connectivity.</p>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+
+    <!-- Module 3 -->
+    <a href="3-wan-connection.html" class="card">
+      <div class="card-text">
+        <div class="badge">Module 3</div>
+        <h2>Connecting the Branches</h2>
+        <p>Link the two routers together and verify end-to-end routing.</p>
+      </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</div>
+</body>
+</html>
