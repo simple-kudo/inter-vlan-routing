@@ -189,7 +189,9 @@ function render(){
   });
 
   $("back").disabled = cur === 0;
-  $("next").textContent = cur === total - 1 ? "Return to Home" : "Next →";
+  const isLast = cur === total - 1;
+  $("next").style.display = isLast ? "none" : "inline-flex";
+  $("next").textContent = isLast ? "Return to Home" : "Next →";
 }
 
 $("back").addEventListener("click", () => { if(cur>0){cur--;render();} });
